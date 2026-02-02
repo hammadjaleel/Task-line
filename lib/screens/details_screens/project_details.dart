@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ProjectDetailsScreen extends StatelessWidget {
-  const ProjectDetailsScreen({super.key});
+  const ProjectDetailsScreen({super.key, this.project});
+
+  final Map<String, dynamic>? project;
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +22,7 @@ class ProjectDetailsScreen extends StatelessWidget {
         ),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.more_horiz),
-            onPressed: () {},
-          ),
+          IconButton(icon: const Icon(Icons.more_horiz), onPressed: () {}),
         ],
       ),
       body: SingleChildScrollView(
@@ -38,7 +37,9 @@ class ProjectDetailsScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Mobile App Redesign',
+                    (project != null && (project!['title'] as String?) != null)
+                        ? project!['title'] as String
+                        : 'Project Details',
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -51,8 +52,11 @@ class ProjectDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      Icon(Icons.calendar_today,
-                          size: 16, color: colors.onSurface.withOpacity(0.6)),
+                      Icon(
+                        Icons.calendar_today,
+                        size: 16,
+                        color: colors.onSurface.withOpacity(0.6),
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         'Due: Oct 24, 2023',
@@ -81,17 +85,11 @@ class ProjectDetailsScreen extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {},
-                    child: Text(
-                      'Activity',
-                      style: theme.textTheme.bodyMedium,
-                    ),
+                    child: Text('Activity', style: theme.textTheme.bodyMedium),
                   ),
                   TextButton(
                     onPressed: () {},
-                    child: Text(
-                      'Files',
-                      style: theme.textTheme.bodyMedium,
-                    ),
+                    child: Text('Files', style: theme.textTheme.bodyMedium),
                   ),
                 ],
               ),
@@ -105,12 +103,15 @@ class ProjectDetailsScreen extends StatelessWidget {
                 children: [
                   Text(
                     'Current Tasks',
-                    style: theme.textTheme.titleLarge
-                        ?.copyWith(fontWeight: FontWeight.bold),
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: colors.surface,
                       borderRadius: BorderRadius.circular(6),
@@ -143,10 +144,11 @@ class ProjectDetailsScreen extends StatelessWidget {
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            Icon(Icons.schedule,
-                                size: 14,
-                                color:
-                                    colors.onSurface.withOpacity(0.6)),
+                            Icon(
+                              Icons.schedule,
+                              size: 14,
+                              color: colors.onSurface.withOpacity(0.6),
+                            ),
                             const SizedBox(width: 4),
                             const Text('Due Today'),
                           ],
@@ -155,7 +157,9 @@ class ProjectDetailsScreen extends StatelessWidget {
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: colors.primary.withOpacity(0.15),
                         borderRadius: BorderRadius.circular(20),
@@ -200,7 +204,9 @@ class ProjectDetailsScreen extends StatelessWidget {
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: colors.surface,
                         borderRadius: BorderRadius.circular(20),

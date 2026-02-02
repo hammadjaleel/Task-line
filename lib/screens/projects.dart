@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:taskline/data/dummy_data.dart';
+import 'package:taskline/screens/details_screens/project_details.dart';
 
 class ProjectsScreen extends StatelessWidget {
   const ProjectsScreen({super.key});
@@ -36,7 +38,7 @@ class ProjectsScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '8 Active Projects',
+                  '${DummyData.projects.length} Active Projects',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: colors.onSurface.withOpacity(0.6),
                   ),
@@ -46,10 +48,7 @@ class ProjectsScreen extends StatelessWidget {
           ],
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {},
-          ),
+          IconButton(icon: const Icon(Icons.notifications), onPressed: () {}),
           const SizedBox(width: 8),
         ],
       ),
@@ -64,15 +63,12 @@ class ProjectsScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: colors.surface.withOpacity(0.8),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: colors.onSurface.withOpacity(0.1),
-                ),
+                border: Border.all(color: colors.onSurface.withOpacity(0.1)),
               ),
               child: Row(
                 children: [
                   const SizedBox(width: 12),
-                  Icon(Icons.search,
-                      color: colors.onSurface.withOpacity(0.6)),
+                  Icon(Icons.search, color: colors.onSurface.withOpacity(0.6)),
                   const SizedBox(width: 8),
                   Expanded(
                     child: TextField(
@@ -86,8 +82,7 @@ class ProjectsScreen extends StatelessWidget {
                       style: TextStyle(color: colors.onSurface),
                     ),
                   ),
-                  Icon(Icons.tune,
-                      color: colors.onSurface.withOpacity(0.6)),
+                  Icon(Icons.tune, color: colors.onSurface.withOpacity(0.6)),
                   const SizedBox(width: 12),
                 ],
               ),
@@ -117,8 +112,9 @@ class ProjectsScreen extends StatelessWidget {
                         Container(
                           height: 2,
                           width: 32,
-                          color:
-                              tab == 'All' ? colors.primary : Colors.transparent,
+                          color: tab == 'All'
+                              ? colors.primary
+                              : Colors.transparent,
                         ),
                       ],
                     ),
@@ -138,96 +134,100 @@ class ProjectsScreen extends StatelessWidget {
               mainAxisSpacing: 12,
               childAspectRatio: 0.78,
               children: [
-                for (final project in [
-                  {'title': 'Mobile UI Redesign', 'team': 'Design Team', 'progress': 0.75},
-                  {'title': 'Marketing Site', 'team': 'Marketing', 'progress': 0.40},
-                  {'title': 'App Development', 'team': 'Engineering', 'progress': 0.92},
-                  {'title': 'Brand Identity', 'team': 'Creative', 'progress': 0.15},
-                  {'title': 'Video Content', 'team': 'Production', 'progress': 0.60},
-                  {'title': 'Data Analysis', 'team': 'Research', 'progress': 0.32},
-                ])
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: colors.surface.withOpacity(0.6),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: colors.onSurface.withOpacity(0.1),
+                for (final project in DummyData.projects)
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              ProjectDetailsScreen(project: project),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: colors.surface.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: colors.onSurface.withOpacity(0.1),
+                        ),
                       ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              height: 40,
-                              width: 40,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                color: colors.primary,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                height: 40,
+                                width: 40,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: colors.primary,
+                                ),
+                                child: const Icon(
+                                  Icons.work_outline,
+                                  color: Colors.white,
+                                ),
                               ),
-                              child: const Icon(
-                                Icons.work_outline,
-                                color: Colors.white,
-                              ),
-                            ),
-                            Icon(
-                              Icons.more_horiz,
-                              color: colors.onSurface.withOpacity(0.6),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          project['title'] as String,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          project['team'] as String,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: colors.onSurface.withOpacity(0.6),
-                            letterSpacing: 1,
-                          ),
-                        ),
-                        const Spacer(),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Progress',
-                              style: theme.textTheme.bodySmall?.copyWith(
+                              Icon(
+                                Icons.more_horiz,
                                 color: colors.onSurface.withOpacity(0.6),
                               ),
-                            ),
-                            Text(
-                              '${((project['progress'] as double) * 100).toInt()}%',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: LinearProgressIndicator(
-                            value: project['progress'] as double,
-                            minHeight: 5,
-                            backgroundColor:
-                                colors.onSurface.withOpacity(0.1),
-                            valueColor: AlwaysStoppedAnimation(
-                              colors.primary,
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            project['title'] as String,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 4),
+                          Text(
+                            project['team'] as String,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: colors.onSurface.withOpacity(0.6),
+                              letterSpacing: 1,
+                            ),
+                          ),
+                          const Spacer(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Progress',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: colors.onSurface.withOpacity(0.6),
+                                ),
+                              ),
+                              Text(
+                                '${((project['progress'] as double) * 100).toInt()}%',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: LinearProgressIndicator(
+                              value: project['progress'] as double,
+                              minHeight: 5,
+                              backgroundColor: colors.onSurface.withOpacity(
+                                0.1,
+                              ),
+                              valueColor: AlwaysStoppedAnimation(
+                                colors.primary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
               ],
