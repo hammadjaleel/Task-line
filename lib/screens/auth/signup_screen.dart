@@ -29,8 +29,11 @@ class SignUpScreen extends StatelessWidget {
                   Row(
                     children: [
                       IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                        ),
                       ),
                       const Expanded(
                         child: Text(
@@ -63,10 +66,7 @@ class SignUpScreen extends StatelessWidget {
                   const Text(
                     "Professional task execution for teams.",
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color(0xFF9DA8B9),
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: Color(0xFF9DA8B9), fontSize: 14),
                   ),
 
                   const SizedBox(height: 32),
@@ -81,9 +81,15 @@ class SignUpScreen extends StatelessWidget {
                         obscureText: false,
                       ),
                       const SizedBox(height: 16),
-                      _PasswordField(label: "Password", hint: "Min. 8 characters"),
+                      _PasswordField(
+                        label: "Password",
+                        hint: "Min. 8 characters",
+                      ),
                       const SizedBox(height: 16),
-                      _PasswordField(label: "Confirm Password", hint: "Repeat password"),
+                      _PasswordField(
+                        label: "Confirm Password",
+                        hint: "Repeat password",
+                      ),
                     ],
                   ),
 
@@ -150,7 +156,8 @@ class SignUpScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: _OAuthButton(
-                          icon: Icons.g_mobiledata, // Replace with actual Google SVG if needed
+                          icon: Icons
+                              .g_mobiledata, // Replace with actual Google SVG if needed
                           label: "Google",
                           onPressed: () {},
                         ),
@@ -223,7 +230,14 @@ class _InputField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(color: Color(0xFFE5E7EB), fontSize: 14, fontWeight: FontWeight.w500)),
+        Text(
+          label,
+          style: const TextStyle(
+            color: Color(0xFFE5E7EB),
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
         const SizedBox(height: 6),
         TextField(
           keyboardType: keyboardType,
@@ -268,7 +282,14 @@ class _PasswordFieldState extends State<_PasswordField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(widget.label, style: const TextStyle(color: Color(0xFFE5E7EB), fontSize: 14, fontWeight: FontWeight.w500)),
+        Text(
+          widget.label,
+          style: const TextStyle(
+            color: Color(0xFFE5E7EB),
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
         const SizedBox(height: 6),
         TextField(
           obscureText: _obscure,
@@ -287,7 +308,10 @@ class _PasswordFieldState extends State<_PasswordField> {
               borderSide: BorderSide(color: SignUpScreen.primary),
             ),
             suffixIcon: IconButton(
-              icon: Icon(_obscure ? Icons.visibility : Icons.visibility_off, color: const Color(0xFF9DA8B9)),
+              icon: Icon(
+                _obscure ? Icons.visibility : Icons.visibility_off,
+                color: const Color(0xFF9DA8B9),
+              ),
               onPressed: () => setState(() => _obscure = !_obscure),
             ),
           ),
@@ -303,14 +327,24 @@ class _OAuthButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
 
-  const _OAuthButton({required this.icon, required this.label, required this.onPressed});
+  const _OAuthButton({
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
       onPressed: onPressed,
       icon: Icon(icon, size: 18, color: Colors.white),
-      label: Text(label, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
+      label: Text(
+        label,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
       style: ElevatedButton.styleFrom(
         backgroundColor: SignUpScreen.surfaceDark,
         elevation: 0,

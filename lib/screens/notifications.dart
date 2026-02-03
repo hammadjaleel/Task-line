@@ -102,6 +102,10 @@ class NotificationsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.chevron_left),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: const Text(
           'Notifications',
           style: TextStyle(fontWeight: FontWeight.bold),
