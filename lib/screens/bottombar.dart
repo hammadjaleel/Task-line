@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:taskline/screens/add_project.dart';
 import 'package:taskline/screens/chatscreen.dart';
 import 'package:taskline/screens/settings.dart';
 
 import 'home.dart';
 import 'projects.dart';
-import 'newtask.dart';
+
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({Key? key}) : super(key: key);
@@ -20,7 +21,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   final List<Widget> _screens = const [
     HomeScreen(),
     ProjectsScreen(),
-    AddTaskScreen(),
+    AddProjectScreen(),
     chatScreen(),
     ProfileSettingsScreen(),
   ];

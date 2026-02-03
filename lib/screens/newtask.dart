@@ -1,7 +1,28 @@
 import 'package:flutter/material.dart';
 
-class AddTaskScreen extends StatelessWidget {
+class AddTaskScreen extends StatefulWidget {
   const AddTaskScreen({super.key});
+
+  @override
+  State<AddTaskScreen> createState() => _AddTaskScreenState();
+}
+
+class _AddTaskScreenState extends State<AddTaskScreen> {
+  String _selectedPriority = 'Medium';
+  DateTime? _dueDate;
+
+  Future<void> _pickDueDate() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _dueDate ?? now,
+      firstDate: DateTime(now.year - 5),
+      lastDate: DateTime(now.year + 10),
+    );
+    if (picked != null) {
+      setState(() => _dueDate = picked);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,11 +89,15 @@ class AddTaskScreen extends StatelessWidget {
                   fillColor: colors.surface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(color: colors.onSurface.withOpacity(0.1)),
+                    borderSide: BorderSide(
+                      color: colors.onSurface.withOpacity(0.1),
+                    ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(color: colors.onSurface.withOpacity(0.1)),
+                    borderSide: BorderSide(
+                      color: colors.onSurface.withOpacity(0.1),
+                    ),
                   ),
                 ),
               ),
@@ -96,11 +121,15 @@ class AddTaskScreen extends StatelessWidget {
                   fillColor: colors.surface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(color: colors.onSurface.withOpacity(0.1)),
+                    borderSide: BorderSide(
+                      color: colors.onSurface.withOpacity(0.1),
+                    ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(color: colors.onSurface.withOpacity(0.1)),
+                    borderSide: BorderSide(
+                      color: colors.onSurface.withOpacity(0.1),
+                    ),
                   ),
                 ),
               ),
@@ -112,7 +141,12 @@ class AddTaskScreen extends StatelessWidget {
                 context,
                 icon: Icons.calendar_today,
                 title: 'Due Date',
-                trailing: 'Oct 24, 2023',
+                trailing: _dueDate != null
+                    ? MaterialLocalizations.of(
+                        context,
+                      ).formatMediumDate(_dueDate!)
+                    : 'Select date',
+                onTap: _pickDueDate,
               ),
 
               const SizedBox(height: 12),
@@ -143,16 +177,50 @@ class AddTaskScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: colors.surface,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: colors.onSurface.withOpacity(0.1),
-                  ),
+                  border: Border.all(color: colors.onSurface.withOpacity(0.1)),
                 ),
                 child: Row(
                   children: [
-                    _priorityChip(context, 'Low', false),
-                    _priorityChip(context, 'Medium', true),
-                    _priorityChip(context, 'High', false),
+                    _priorityChip(
+                      context,
+                      'Low',
+                      _selectedPriority == 'Low',
+                      () => setState(() => _selectedPriority = 'Low'),
+                    ),
+                    _priorityChip(
+                      context,
+                      'Medium',
+                      _selectedPriority == 'Medium',
+                      () => setState(() => _selectedPriority = 'Medium'),
+                    ),
+                    _priorityChip(
+                      context,
+                      'High',
+                      _selectedPriority == 'High',
+                      () => setState(() => _selectedPriority = 'High'),
+                    ),
                   ],
+                ),
+              ),
+              SizedBox(height: 40),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(Icons.check_circle),
+                    label: const Text('Save Task'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      textStyle: theme.textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -161,27 +229,6 @@ class AddTaskScreen extends StatelessWidget {
       ),
 
       /// Bottom Save Button
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-        child: SizedBox(
-          width: double.infinity,
-          child: ElevatedButton.icon(
-            onPressed: () {},
-            icon: const Icon(Icons.check_circle),
-            label: const Text('Save Task'),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              textStyle: theme.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -192,79 +239,98 @@ class AddTaskScreen extends StatelessWidget {
     required String title,
     required String trailing,
     bool showAvatar = false,
+    VoidCallback? onTap,
   }) {
     final colors = Theme.of(context).colorScheme;
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: colors.surface,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: colors.onSurface.withOpacity(0.1)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            height: 40,
-            width: 40,
-            decoration: BoxDecoration(
-              color: colors.primary.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: colors.primary),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: colors.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: colors.onSurface.withOpacity(0.1)),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              title,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
-          ),
-          if (showAvatar)
-            CircleAvatar(
-              radius: 14,
-              backgroundColor: colors.primary,
-              child: const Text(
-                'ME',
-                style: TextStyle(fontSize: 10, color: Colors.white),
+          child: Row(
+            children: [
+              Container(
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                  color: colors.primary.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: colors.primary),
               ),
-            ),
-          const SizedBox(width: 8),
-          Text(
-            trailing,
-            style: Theme.of(context)
-                .textTheme
-                .bodySmall
-                ?.copyWith(color: colors.onSurface.withOpacity(0.6)),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  title,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                ),
+              ),
+              if (showAvatar)
+                CircleAvatar(
+                  radius: 14,
+                  backgroundColor: colors.primary,
+                  child: const Text(
+                    'ME',
+                    style: TextStyle(fontSize: 10, color: Colors.white),
+                  ),
+                ),
+              const SizedBox(width: 8),
+              Text(
+                trailing,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: colors.onSurface.withOpacity(0.6),
+                ),
+              ),
+              const SizedBox(width: 4),
+              Icon(
+                Icons.chevron_right,
+                color: colors.onSurface.withOpacity(0.4),
+              ),
+            ],
           ),
-          const SizedBox(width: 4),
-          Icon(Icons.chevron_right,
-              color: colors.onSurface.withOpacity(0.4)),
-        ],
+        ),
       ),
     );
   }
 
   /// Priority Chip
-  Widget _priorityChip(BuildContext context, String label, bool active) {
+  Widget _priorityChip(
+    BuildContext context,
+    String label,
+    bool active,
+    VoidCallback onTap,
+  ) {
     final colors = Theme.of(context).colorScheme;
 
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: active ? colors.primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          label,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: active ? colors.onPrimary : colors.onSurface.withOpacity(0.6),
-              ),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: active ? colors.primary : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: active
+                  ? colors.onPrimary
+                  : colors.onSurface.withOpacity(0.6),
+            ),
+          ),
         ),
       ),
     );

@@ -41,6 +41,23 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
     Navigator.pop(context);
   }
 
+  void _discardInputs() {
+    final hadData =
+        _titleController.text.isNotEmpty ||
+        _teamController.text.isNotEmpty ||
+        _progress != 0.0;
+    setState(() {
+      _titleController.clear();
+      _teamController.clear();
+      _progress = 0.0;
+    });
+    if (hadData) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Cleared form data')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -51,17 +68,7 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
         elevation: 0,
         centerTitle: true,
         leadingWidth: 90,
-        leading: TextButton.icon(
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.chevron_left, color: colors.primary),
-          label: Text(
-            'Back',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: colors.primary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
+
         title: Text(
           'New Project',
           style: theme.textTheme.titleMedium?.copyWith(
@@ -70,7 +77,7 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: _discardInputs,
             child: Text(
               'Discard',
               style: theme.textTheme.bodyMedium?.copyWith(

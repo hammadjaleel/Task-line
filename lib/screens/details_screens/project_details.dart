@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taskline/screens/newtask.dart';
 
 class ProjectDetailsScreen extends StatelessWidget {
   const ProjectDetailsScreen({super.key, this.project});
@@ -225,16 +226,11 @@ class ProjectDetailsScreen extends StatelessWidget {
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          FloatingActionButton(
-            heroTag: 'edit',
-            onPressed: () {},
-            backgroundColor: colors.surface,
-            child: Icon(Icons.edit, color: colors.primary),
-          ),
-          const SizedBox(height: 12),
           FloatingActionButton.extended(
             heroTag: 'add',
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddTaskScreen()));
+            },
             icon: const Icon(Icons.add),
             label: const Text('Add Task'),
           ),

@@ -237,14 +237,6 @@ class ProjectsScreen extends StatelessWidget {
         ],
       ),
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(
-            context,
-          ).push(MaterialPageRoute(builder: (_) => const AddProjectScreen()));
-        },
-        child: const Icon(Icons.add, size: 28),
-      ),
     );
   }
 }

@@ -8,34 +8,42 @@ class AppThemes {
   static const Color warning = Color(0xFFF59E0B);
   static const Color text = Color(0xFFE5E7EB);
 
+  // Light theme palette (separate from dark theme)
+  static const Color lightBackground = Color(0xFFFFFFFF);
+  static const Color lightSurface = Color(0xFFF1F5F9);
+  static const Color lightPrimary = Color(0xFF2563EB);
+  static const Color lightAccent = Color(0xFF16A34A);
+  static const Color lightWarning = Color(0xFFF59E0B);
+  static const Color lightText = Color(0xFF111827);
+
   static final ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
-    scaffoldBackgroundColor: background,
-    primaryColor: primary,
+    scaffoldBackgroundColor: lightBackground,
+    primaryColor: lightPrimary,
     colorScheme: ColorScheme.light(
-      background: background,
-      surface: surface,
-      primary: primary,
-      secondary: accent,
-      error: warning,
-      onBackground: text,
-      onSurface: text,
+      background: lightBackground,
+      surface: lightSurface,
+      primary: lightPrimary,
+      secondary: lightAccent,
+      error: lightWarning,
+      onBackground: lightText,
+      onSurface: lightText,
       onPrimary: Colors.white,
       onSecondary: Colors.white,
       onError: Colors.white,
     ),
     textTheme: const TextTheme(
-      bodyLarge: TextStyle(color: text),
-      bodyMedium: TextStyle(color: text),
-      bodySmall: TextStyle(color: text),
+      bodyLarge: TextStyle(color: lightText),
+      bodyMedium: TextStyle(color: lightText),
+      bodySmall: TextStyle(color: lightText),
     ),
     appBarTheme: const AppBarTheme(
-      backgroundColor: surface,
-      foregroundColor: text,
+      backgroundColor: lightSurface,
+      foregroundColor: lightText,
     ),
-    cardColor: surface,
+    cardColor: lightSurface,
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
-      backgroundColor: accent,
+      backgroundColor: lightAccent,
       foregroundColor: Colors.white,
     ),
   );
