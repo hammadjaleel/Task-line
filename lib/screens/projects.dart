@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taskline/data/dummy_data.dart';
+import 'package:taskline/screens/add_project.dart';
 import 'package:taskline/screens/details_screens/project_details.dart';
 
 class ProjectsScreen extends StatelessWidget {
@@ -237,7 +238,11 @@ class ProjectsScreen extends StatelessWidget {
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const AddProjectScreen()));
+        },
         child: const Icon(Icons.add, size: 28),
       ),
     );
