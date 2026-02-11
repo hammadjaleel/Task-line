@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:taskline/providers/auth_providers.dart';
+import 'package:taskline/screens/auth/login_screen.dart';
 import 'package:taskline/theme/theme_provider.dart';
 
 class ProfileSettingsScreen extends StatelessWidget {
@@ -10,6 +12,7 @@ class ProfileSettingsScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final auth = Provider.of<AuthProviders>(context);
 
     return Scaffold(
       backgroundColor: colors.background,
@@ -93,14 +96,14 @@ class ProfileSettingsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Alex Johnson',
+                      auth.user?.name ?? 'Alex Johnson',
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'alex.j@example.com',
+                      auth.user?.email ?? 'alex.j@example.com',
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: colors.onSurface.withOpacity(0.6),
                       ),
@@ -268,7 +271,11 @@ class ProfileSettingsScreen extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        onTap: () {},
+                        onTap: () {
+                          auth.logout();
+                          // Navigate to login screen or show confirmation
+                          Navigator.of(context).pushReplacement(MaterialPageRoute(builder:  (context)=>const LoginScreen()));
+                        },
                       ),
                     ),
 

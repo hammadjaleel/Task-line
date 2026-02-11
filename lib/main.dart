@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:taskline/screens/auth/login_screen.dart';
+import 'package:taskline/screens/auth/signup_screen.dart';
 import 'package:taskline/theme/theme_provider.dart';
 import 'package:taskline/screens/bottombar.dart';
+import 'package:taskline/providers/auth_providers.dart';
 import 'theme/app_themes.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => ThemeProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProviders()),
+      ],
       child: const MyApp(),
     ),
   );
@@ -25,7 +31,7 @@ class MyApp extends StatelessWidget {
       theme: AppThemes.lightTheme,
       darkTheme: AppThemes.darkTheme,
       themeMode: themeProvider.themeMode,
-      home: BottomNavBar(),
+      home: LoginScreen(),
     );
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:taskline/data/dummy_data.dart';
+import 'package:taskline/providers/auth_providers.dart';
 import 'package:taskline/screens/notifications.dart';
 import 'package:taskline/screens/details_screens/project_details.dart';
 import 'package:taskline/screens/details_screens/task_details.dart';
@@ -11,6 +13,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
+    final auth = Provider.of<AuthProviders>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -61,7 +64,7 @@ class HomeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Hello, ${DummyData.userName}',
+                    'Hello, ${auth.user?.name ?? 'User'}',
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),

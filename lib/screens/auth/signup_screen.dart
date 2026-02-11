@@ -1,7 +1,11 @@
 // signup_screen.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:taskline/providers/auth_providers.dart';
+import 'package:taskline/screens/auth/login_screen.dart';
+import 'package:taskline/screens/bottombar.dart';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
 
   static const Color backgroundDark = Color(0xFF101722);
@@ -11,9 +15,32 @@ class SignUpScreen extends StatelessWidget {
   static const Color textGray = Color(0xFFE5E7EB);
 
   @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  bool _obscurePassword = true;
+  bool _obscureConfirm = true;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final registerProvider = Provider.of<AuthProviders>(context);
     return Scaffold(
-      backgroundColor: backgroundDark,
+      backgroundColor: SignUpScreen.backgroundDark,
       body: SafeArea(
         child: Center(
           child: Container(
@@ -24,8 +51,6 @@ class SignUpScreen extends StatelessWidget {
               child: Column(
                 children: [
                   const SizedBox(height: 12),
-
-                  /// Top App Bar
                   Row(
                     children: [
                       IconButton(
@@ -37,7 +62,7 @@ class SignUpScreen extends StatelessWidget {
                       ),
                       const Expanded(
                         child: Text(
-                          "Join App",
+                          "Task Line",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white,
@@ -46,13 +71,10 @@ class SignUpScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 48), // To balance the back button
+                      const SizedBox(width: 48),
                     ],
                   ),
-
                   const SizedBox(height: 24),
-
-                  /// Headline
                   const Text(
                     "Create your account",
                     textAlign: TextAlign.center,
@@ -68,43 +90,279 @@ class SignUpScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Color(0xFF9DA8B9), fontSize: 14),
                   ),
-
                   const SizedBox(height: 32),
-
-                  /// Input Fields
-                  Column(
-                    children: [
-                      _InputField(
-                        label: "Email",
-                        hint: "name@company.com",
-                        keyboardType: TextInputType.emailAddress,
-                        obscureText: false,
-                      ),
-                      const SizedBox(height: 16),
-                      _PasswordField(
-                        label: "Password",
-                        hint: "Min. 8 characters",
-                      ),
-                      const SizedBox(height: 16),
-                      _PasswordField(
-                        label: "Confirm Password",
-                        hint: "Repeat password",
-                      ),
-                    ],
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Name",
+                              style: TextStyle(
+                                color: Color(0xFFE5E7EB),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            TextFormField(
+                              controller: _nameController,
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Please enter your name';
+                                }
+                                return null;
+                              },
+                              keyboardType: TextInputType.name,
+                              obscureText: false,
+                              style: const TextStyle(color: Colors.white),
+                              decoration: InputDecoration(
+                                hintText: "Your full name",
+                                hintStyle: const TextStyle(
+                                  color: Color(0xFF9DA8B9),
+                                ),
+                                filled: true,
+                                fillColor: SignUpScreen.surfaceDark,
+                                border: const OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(12),
+                                  ),
+                                  borderSide: BorderSide(
+                                    color: SignUpScreen.borderGray,
+                                  ),
+                                ),
+                                focusedBorder: const OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(12),
+                                  ),
+                                  borderSide: BorderSide(
+                                    color: SignUpScreen.primary,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Email",
+                              style: TextStyle(
+                                color: Color(0xFFE5E7EB),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            TextFormField(
+                              controller: _emailController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your email';
+                                }
+                                final emailRegex = RegExp(
+                                  r'^[^@]+@[^@]+\.[^@]+',
+                                );
+                                if (!emailRegex.hasMatch(value)) {
+                                  return 'Please enter a valid email address';
+                                }
+                                return null;
+                              },
+                              keyboardType: TextInputType.emailAddress,
+                              obscureText: false,
+                              style: const TextStyle(color: Colors.white),
+                              decoration: InputDecoration(
+                                hintText: "name@company.com",
+                                hintStyle: const TextStyle(
+                                  color: Color(0xFF9DA8B9),
+                                ),
+                                filled: true,
+                                fillColor: SignUpScreen.surfaceDark,
+                                border: const OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(12),
+                                  ),
+                                  borderSide: const BorderSide(
+                                    color: SignUpScreen.borderGray,
+                                  ),
+                                ),
+                                focusedBorder: const OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(12),
+                                  ),
+                                  borderSide: const BorderSide(
+                                    color: SignUpScreen.primary,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Password",
+                              style: TextStyle(
+                                color: Color(0xFFE5E7EB),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            TextFormField(
+                              controller: _passwordController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your password';
+                                }
+                                if (value.length < 8) {
+                                  return 'Password must be at least 8 characters long';
+                                }
+                                return null;
+                              },
+                              obscureText: _obscurePassword,
+                              style: const TextStyle(color: Colors.white),
+                              decoration: InputDecoration(
+                                hintText: "Enter your password",
+                                hintStyle: const TextStyle(
+                                  color: Color(0xFF9DA8B9),
+                                ),
+                                filled: true,
+                                fillColor: SignUpScreen.surfaceDark,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: SignUpScreen.borderGray,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: SignUpScreen.primary,
+                                  ),
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscurePassword
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                    color: const Color(0xFF9DA8B9),
+                                  ),
+                                  onPressed: () => setState(
+                                    () => _obscurePassword = !_obscurePassword,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Confirm Password",
+                              style: TextStyle(
+                                color: Color(0xFFE5E7EB),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            TextFormField(
+                              controller: _confirmPasswordController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please confirm your password';
+                                }
+                                if (value != _passwordController.text) {
+                                  return 'Passwords do not match';
+                                }
+                                return null;
+                              },
+                              obscureText: _obscureConfirm,
+                              style: const TextStyle(color: Colors.white),
+                              decoration: InputDecoration(
+                                hintText: "Repeat password",
+                                hintStyle: const TextStyle(
+                                  color: Color(0xFF9DA8B9),
+                                ),
+                                filled: true,
+                                fillColor: SignUpScreen.surfaceDark,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: SignUpScreen.borderGray,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: SignUpScreen.primary,
+                                  ),
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscureConfirm
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                    color: const Color(0xFF9DA8B9),
+                                  ),
+                                  onPressed: () => setState(
+                                    () => _obscureConfirm = !_obscureConfirm,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-
                   const SizedBox(height: 32),
-
-                  /// Primary Action Button
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        final name = _nameController.text.trim();
+                        final email = _emailController.text.trim();
+                        final password = _passwordController.text;
+                        final confirm = _confirmPasswordController.text;
+                        try {
+                          await registerProvider.register(
+                            name,
+                            email,
+                            password,
+                            confirm,
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Registration successful!'),
+                            ),
+                          );
+                          Navigator.of(context).pushReplacement(MaterialPageRoute(builder:  (context) => const BottomNavBar()));
+                        } catch (e) {
+                         
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Registration failed: $e'),
+                              ),
+                            );
+                          }
+                        }
+                    },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: primary,
+                      backgroundColor: SignUpScreen.primary,
                       minimumSize: const Size.fromHeight(56),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      shadowColor: primary.withOpacity(0.2),
+                      shadowColor: SignUpScreen.primary.withOpacity(0.2),
                       elevation: 8,
                     ),
                     child: const Text(
@@ -116,66 +374,8 @@ class SignUpScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-
-                  const SizedBox(height: 24),
-
-                  /// Divider
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          height: 1,
-                          color: borderGray.withOpacity(0.5),
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(
-                          "Or sign up with",
-                          style: TextStyle(
-                            color: Color(0xFF9DA8B9),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          height: 1,
-                          color: borderGray.withOpacity(0.5),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  /// OAuth Buttons
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _OAuthButton(
-                          icon: Icons
-                              .g_mobiledata, // Replace with actual Google SVG if needed
-                          label: "Google",
-                          onPressed: () {},
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _OAuthButton(
-                          icon: Icons.code, // Replace with GitHub SVG if needed
-                          label: "GitHub",
-                          onPressed: () {},
-                        ),
-                      ),
-                    ],
-                  ),
-
+                  
                   const SizedBox(height: 32),
-
-                  /// Footer Link
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -187,11 +387,13 @@ class SignUpScreen extends StatelessWidget {
                         ),
                       ),
                       TextButton(
-                        onPressed: () {},
-                        child: Text(
+                        onPressed: () {
+                          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginScreen()));
+                        },
+                        child: const Text(
                           "Log in",
                           style: TextStyle(
-                            color: primary,
+                            color: SignUpScreen.primary,
                             fontWeight: FontWeight.w600,
                             decoration: TextDecoration.underline,
                           ),
@@ -199,158 +401,12 @@ class SignUpScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 24),
                 ],
               ),
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-/// Generic Input Field
-class _InputField extends StatelessWidget {
-  final String label;
-  final String hint;
-  final TextInputType keyboardType;
-  final bool obscureText;
-
-  const _InputField({
-    required this.label,
-    required this.hint,
-    this.keyboardType = TextInputType.text,
-    this.obscureText = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: Color(0xFFE5E7EB),
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 6),
-        TextField(
-          keyboardType: keyboardType,
-          obscureText: obscureText,
-          style: const TextStyle(color: Colors.white),
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: const TextStyle(color: Color(0xFF9DA8B9)),
-            filled: true,
-            fillColor: SignUpScreen.surfaceDark,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: SignUpScreen.borderGray),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: SignUpScreen.primary),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-/// Password Field with visibility icon
-class _PasswordField extends StatefulWidget {
-  final String label;
-  final String hint;
-
-  const _PasswordField({required this.label, required this.hint});
-
-  @override
-  State<_PasswordField> createState() => _PasswordFieldState();
-}
-
-class _PasswordFieldState extends State<_PasswordField> {
-  bool _obscure = true;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          widget.label,
-          style: const TextStyle(
-            color: Color(0xFFE5E7EB),
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 6),
-        TextField(
-          obscureText: _obscure,
-          style: const TextStyle(color: Colors.white),
-          decoration: InputDecoration(
-            hintText: widget.hint,
-            hintStyle: const TextStyle(color: Color(0xFF9DA8B9)),
-            filled: true,
-            fillColor: SignUpScreen.surfaceDark,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: SignUpScreen.borderGray),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: SignUpScreen.primary),
-            ),
-            suffixIcon: IconButton(
-              icon: Icon(
-                _obscure ? Icons.visibility : Icons.visibility_off,
-                color: const Color(0xFF9DA8B9),
-              ),
-              onPressed: () => setState(() => _obscure = !_obscure),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-/// OAuth Button
-class _OAuthButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onPressed;
-
-  const _OAuthButton({
-    required this.icon,
-    required this.label,
-    required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton.icon(
-      onPressed: onPressed,
-      icon: Icon(icon, size: 18, color: Colors.white),
-      label: Text(
-        label,
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: SignUpScreen.surfaceDark,
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        side: const BorderSide(color: SignUpScreen.borderGray),
       ),
     );
   }
