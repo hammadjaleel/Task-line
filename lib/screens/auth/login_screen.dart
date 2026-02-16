@@ -46,16 +46,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
     return Scaffold(
       backgroundColor: LoginScreen.backgroundDark,
       body: SafeArea(
         child: Center(
-          child: Container(
-            width: double.infinity,
-            constraints: const BoxConstraints(maxWidth: 480),
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              children: [
+          child: SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(24, 0, 24, bottomInset + 24),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 480),
+              // Allow the content to scroll instead of overflowing when the keyboard shows.
+              child: Column(
+                children: [
                 const SizedBox(height: 12),
 
                 /// Top Navigation Bar
@@ -259,7 +261,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
 
-                const Spacer(),
+                const SizedBox(height: 32),
 
                 /// Footer Link
                 Padding(
@@ -292,6 +294,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ],
+            ),
             ),
           ),
         ),

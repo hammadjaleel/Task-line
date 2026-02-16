@@ -42,7 +42,7 @@ class chatScreen extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.onBackground.withOpacity(0.05),
+                      color: theme.colorScheme.onSurface.withOpacity(0.05),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -50,7 +50,7 @@ class chatScreen extends StatelessWidget {
                       style: theme.textTheme.bodySmall?.copyWith(
                         fontSize: 10,
                         letterSpacing: 1.2,
-                        color: theme.colorScheme.onBackground.withOpacity(0.5),
+                        color: theme.colorScheme.onSurface.withOpacity(0.5),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -84,7 +84,7 @@ class chatScreen extends StatelessWidget {
                             'Jordan Doe',
                             style: theme.textTheme.bodySmall?.copyWith(
                               fontSize: 11,
-                              color: theme.colorScheme.onBackground.withOpacity(0.6),
+                              color: theme.colorScheme.onSurface.withOpacity(0.6),
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -103,7 +103,7 @@ class chatScreen extends StatelessWidget {
                             '10:30 AM',
                             style: theme.textTheme.bodySmall?.copyWith(
                               fontSize: 10,
-                              color: theme.colorScheme.onBackground.withOpacity(0.4),
+                              color: theme.colorScheme.onSurface.withOpacity(0.4),
                             ),
                           ),
                         ],
@@ -142,7 +142,7 @@ class chatScreen extends StatelessWidget {
                                 '10:32 AM',
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   fontSize: 10,
-                                  color: theme.colorScheme.onBackground.withOpacity(0.4),
+                                  color: theme.colorScheme.onSurface.withOpacity(0.4),
                                 ),
                               ),
                               const SizedBox(width: 4),
@@ -169,7 +169,7 @@ class chatScreen extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.onBackground.withOpacity(0.05),
+                        color: theme.colorScheme.onSurface.withOpacity(0.05),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
@@ -207,7 +207,7 @@ class chatScreen extends StatelessWidget {
                 color: theme.scaffoldBackgroundColor,
                 border: Border(
                   top: BorderSide(
-                    color: theme.colorScheme.onBackground.withOpacity(0.05),
+                    color: theme.colorScheme.onSurface.withOpacity(0.05),
                   ),
                 ),
               ),

@@ -15,7 +15,7 @@ class ProfileSettingsScreen extends StatelessWidget {
     final auth = Provider.of<AuthProviders>(context);
 
     return Scaffold(
-      backgroundColor: colors.background,
+      backgroundColor: colors.surface,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.only(bottom: 32),
@@ -50,8 +50,10 @@ class ProfileSettingsScreen extends StatelessWidget {
 
               // ─── Profile Header ──────────────────────────
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24),
+                padding: const EdgeInsets.all(24),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Stack(
                       children: [
@@ -81,7 +83,7 @@ class ProfileSettingsScreen extends StatelessWidget {
                               color: colors.primary,
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: colors.background,
+                                color: colors.surface,
                                 width: 2,
                               ),
                             ),
@@ -96,7 +98,7 @@ class ProfileSettingsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      auth.user?.name ?? 'Alex Johnson',
+                      auth.user?.name.toUpperCase() ?? 'Alex Johnson',
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -212,7 +214,7 @@ class ProfileSettingsScreen extends StatelessWidget {
                               onChanged: (value) {
                                 themeProvider.toggleTheme(value);
                               },
-                              activeColor: colors.primary,
+                              activeThumbColor: colors.primary,
                             ),
                           ),
                         ],
