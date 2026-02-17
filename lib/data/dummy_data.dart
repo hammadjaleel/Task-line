@@ -9,20 +9,65 @@ class DummyData {
     {'label': 'COMPLETED', 'count': 28},
   ];
 
+  static final List<Map<String, dynamic>> teamMembers = [
+    {'id': 1, 'name': 'Alex Morgan', 'role': 'Product Lead'},
+    {'id': 2, 'name': 'Priya Patel', 'role': 'UI/UX Designer'},
+    {'id': 3, 'name': 'Jordan Lee', 'role': 'Flutter Developer'},
+    {'id': 4, 'name': 'Samira Gomez', 'role': 'QA Lead'},
+    {'id': 5, 'name': 'Noah Chen', 'role': 'Backend Engineer'},
+    {'id': 6, 'name': 'Lina Torres', 'role': 'Project Manager'},
+  ];
+
   // Projects used across app
   static final List<Map<String, dynamic>> projects = [
     {
       'title': 'Mobile App Redesign',
-      'team': 'Internal Tooling',
+      'description': 'Revamp the flagship mobile experience ahead of Q4.',
+      'team': [1, 2, 3],
       'progress': 0.75,
     },
-    {'title': 'Marketing Campaign', 'team': 'Summer Launch', 'progress': 0.30},
-    {'title': 'Brand Identity', 'team': 'Rebranding 2024', 'progress': 0.90},
-    {'title': 'Data Analysis', 'team': 'Research', 'progress': 0.32},
-    {'title': 'App Development', 'team': 'Engineering', 'progress': 0.92},
-    {'title': 'Video Content', 'team': 'Production', 'progress': 0.60},
-    {'title': 'Marketing Site', 'team': 'Marketing', 'progress': 0.40},
-    {'title': 'Mobile UI Redesign', 'team': 'Design Team', 'progress': 0.75},
+    {
+      'title': 'Marketing Campaign',
+      'description': 'Coordinate launch content and paid media placements.',
+      'team': [2, 4, 6],
+      'progress': 0.30,
+    },
+    {
+      'title': 'Brand Identity',
+      'description': 'Refresh the brand visuals and messaging toolkit.',
+      'team': [1, 2, 5],
+      'progress': 0.90,
+    },
+    {
+      'title': 'Data Analysis',
+      'description': 'Build insights dashboard for leadership reviews.',
+      'team': [3, 5],
+      'progress': 0.32,
+    },
+    {
+      'title': 'App Development',
+      'description': 'Deliver MVP for the internal tasks module.',
+      'team': [3, 5, 6],
+      'progress': 0.92,
+    },
+    {
+      'title': 'Video Content',
+      'description': 'Produce hero spotlights for customer stories.',
+      'team': [2, 4],
+      'progress': 0.60,
+    },
+    {
+      'title': 'Marketing Site',
+      'description': 'Rebuild marketing site with new CMS.',
+      'team': [1, 2, 3, 5],
+      'progress': 0.40,
+    },
+    {
+      'title': 'Mobile UI Redesign',
+      'description': 'Finalize new UI system for Android & iOS.',
+      'team': [2, 3],
+      'progress': 0.75,
+    },
   ];
 
   // Today's tasks on dashboard

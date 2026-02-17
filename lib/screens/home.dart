@@ -24,8 +24,13 @@ class _HomeScreenState extends State<HomeScreen> {
     super.didChangeDependencies();
     if (_hasInitialized) return;
     final auth = Provider.of<AuthProviders>(context, listen: false);
-    final dashboardProvider = Provider.of<DashboardProvider>(context, listen: false);
-    _dashboardFuture = dashboardProvider.fetchDashboardData(auth.user?.token ?? '');
+    final dashboardProvider = Provider.of<DashboardProvider>(
+      context,
+      listen: false,
+    );
+    _dashboardFuture = dashboardProvider.fetchDashboardData(
+      auth.user?.token ?? '',
+    );
     _hasInitialized = true;
   }
 
@@ -33,7 +38,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-
 
     return Scaffold(
       appBar: AppBar(
@@ -86,6 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
           }
           final data = snapshot.data!;
           final stats = data.stats;
+          final projects = data.projects;
 
           return SingleChildScrollView(
             padding: const EdgeInsets.only(bottom: 120),
@@ -150,23 +155,27 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         (stats[i]['label']?.toString() ?? '')
                                             .toUpperCase(),
-                                        style: theme.textTheme.bodySmall?.copyWith(
-                                          letterSpacing: 1,
-                                          fontWeight: FontWeight.w600,
-                                          color: colors.onSurface.withOpacity(0.6),
-                                        ),
+                                        style: theme.textTheme.bodySmall
+                                            ?.copyWith(
+                                              letterSpacing: 1,
+                                              fontWeight: FontWeight.w600,
+                                              color: colors.onSurface
+                                                  .withOpacity(0.6),
+                                            ),
                                       ),
                                       const SizedBox(height: 8),
                                       Text(
                                         '${stats[i]['count'] ?? 0}',
-                                        style: theme.textTheme.headlineSmall?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                        style: theme.textTheme.headlineSmall
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                       ),
                                     ],
                                   ),
@@ -209,7 +218,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     children: [
-                      for (final project in DummyData.projects)
+                      for (final project in projects)
                         GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(
@@ -242,32 +251,42 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 const SizedBox(height: 12),
                                 Text(
-                                  project['title'] as String,
+                                  project['name'] as String,
                                   style: theme.textTheme.bodyLarge?.copyWith(
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                Text(
-                                  project['team'] as String,
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: colors.onSurface.withOpacity(0.6),
+                                const SizedBox(height: 4),
+                                Expanded(
+                                  child: Text(
+                                    project['description'] as String? ?? '',
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: colors.onSurface.withOpacity(0.6),
+                                    ),
+                                    maxLines: 3,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                                 const SizedBox(height: 12),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       'Progress',
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        color: colors.onSurface.withOpacity(0.6),
-                                      ),
+                                      style: theme.textTheme.bodySmall
+                                          ?.copyWith(
+                                            color: colors.onSurface.withOpacity(
+                                              0.6,
+                                            ),
+                                          ),
                                     ),
                                     Text(
                                       '${((project['progress'] as double) * 100).toInt()}%',
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      style: theme.textTheme.bodySmall
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                     ),
                                   ],
                                 ),
@@ -282,94 +301,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                       colors.primary,
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-
-                // Today's Tasks
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  child: Text(
-                    "Today's Tasks",
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    children: [
-                      for (final task in DummyData.todaysTasks)
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => TaskDetailsScreen(task: task),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 12),
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: colors.surface,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: colors.onSurface.withOpacity(0.08),
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  height: 24,
-                                  width: 24,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(6),
-                                    border: Border.all(
-                                      width: 2,
-                                      color: (task['done'] as bool)
-                                          ? colors.primary
-                                          : colors.onSurface.withOpacity(0.4),
-                                    ),
-                                  ),
-                                  child: (task['done'] as bool)
-                                      ? Icon(
-                                          Icons.check,
-                                          size: 14,
-                                          color: colors.primary,
-                                        )
-                                      : null,
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        task['title'] as String,
-                                        style: theme.textTheme.bodyMedium?.copyWith(
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      Text(
-                                        task['time'] as String,
-                                        style: theme.textTheme.bodySmall?.copyWith(
-                                          color: colors.onSurface.withOpacity(0.6),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Icon(
-                                  Icons.more_vert,
-                                  color: colors.onSurface.withOpacity(0.6),
                                 ),
                               ],
                             ),

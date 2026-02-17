@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:taskline/providers/create_project_provider.dart';
 import 'package:taskline/providers/dashboard_provider.dart';
 import 'package:taskline/screens/auth/login_screen.dart';
 import 'package:taskline/screens/auth_wrapper.dart';
@@ -14,6 +15,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => AuthProviders()),
         ChangeNotifierProvider(create: (_) => DashboardProvider()),
+        ChangeNotifierProvider(create: (_) => CreateProjectProvider()),
       ],
       child: const MyApp(),
     ),

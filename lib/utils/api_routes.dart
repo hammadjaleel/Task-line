@@ -8,4 +8,5 @@ class ApiRoutes {
   static const String login = '$baseUrl/auth/login';
 
   static const String Dashboard= '$baseUrl/dashboard';
+  static const String createProject = '$baseUrl/projects';
 }

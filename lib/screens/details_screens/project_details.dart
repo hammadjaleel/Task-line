@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taskline/data/dummy_data.dart';
 import 'package:taskline/screens/newtask.dart';
 
 class ProjectDetailsScreen extends StatelessWidget {
@@ -6,10 +7,37 @@ class ProjectDetailsScreen extends StatelessWidget {
 
   final Map<String, dynamic>? project;
 
+  String _teamSummary(List<dynamic>? ids) {
+    if (ids == null || ids.isEmpty) {
+      return 'No team assigned yet';
+    }
+    final lookup = ids.map((id) => id as int).toSet();
+    final names = DummyData.teamMembers
+        .where((member) => lookup.contains(member['id'] as int))
+        .map((member) => member['name'] as String)
+        .toList();
+    if (names.isEmpty) {
+      return 'No team assigned yet';
+    }
+    if (names.length <= 3) {
+      return names.join(', ');
+    }
+    return '${names.take(3).join(', ')} (+${names.length - 3})';
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
+    final resolvedTitle =
+        (project != null ? project!['title'] as String? : null) ??
+        'Project Details';
+    final resolvedDescription =
+        (project != null ? project!['description'] as String? : null) ??
+        'Revamping the user experience for the Q4 launch including high-fidelity prototypes and developer handoff.';
+    final resolvedTeam = _teamSummary(
+      project != null ? project!['team'] as List<dynamic>? : null,
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -38,17 +66,31 @@ class ProjectDetailsScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    (project != null && (project!['title'] as String?) != null)
-                        ? project!['title'] as String
-                        : 'Project Details',
+                    resolvedTitle,
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    'Revamping the user experience for the Q4 launch including high-fidelity prototypes and developer handoff.',
-                    style: theme.textTheme.bodyMedium,
+                  Text(resolvedDescription, style: theme.textTheme.bodyMedium),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.groups_2,
+                        size: 16,
+                        color: colors.onSurface.withOpacity(0.6),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          resolvedTeam,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: colors.onSurface.withOpacity(0.8),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 12),
                   Row(
@@ -229,7 +271,9 @@ class ProjectDetailsScreen extends StatelessWidget {
           FloatingActionButton.extended(
             heroTag: 'add',
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddTaskScreen()));
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (context) => AddTaskScreen()));
             },
             icon: const Icon(Icons.add),
             label: const Text('Add Task'),

@@ -98,14 +98,14 @@ class ProfileSettingsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      auth.user?.name.toUpperCase() ?? 'Alex Johnson',
+                      auth.user?.name.toUpperCase() ?? 'Anonymous User',
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      auth.user?.email ?? 'alex.j@example.com',
+                      auth.user?.email ?? 'No email provided',
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: colors.onSurface.withOpacity(0.6),
                       ),

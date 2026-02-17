@@ -5,6 +5,25 @@ import 'package:taskline/screens/details_screens/project_details.dart';
 class ProjectsScreen extends StatelessWidget {
   const ProjectsScreen({super.key});
 
+  String _teamSummary(List<dynamic>? ids) {
+    if (ids == null || ids.isEmpty) {
+      return 'No team assigned';
+    }
+    final lookup = ids.map((id) => id as int).toSet();
+    final names = DummyData.teamMembers
+        .where((member) => lookup.contains(member['id'] as int))
+        .map((member) => member['name'] as String)
+        .toList();
+    if (names.isEmpty) {
+      return 'Team pending';
+    }
+    if (names.length <= 2) {
+      return names.join(', ');
+    }
+    final remaining = names.length - 2;
+    return '${names.take(2).join(', ')} +$remaining';
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -188,7 +207,7 @@ class ProjectsScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            project['team'] as String,
+                            _teamSummary(project['team'] as List<dynamic>?),
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: colors.onSurface.withOpacity(0.6),
                               letterSpacing: 1,
