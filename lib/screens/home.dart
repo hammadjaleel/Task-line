@@ -75,7 +75,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-
       body: FutureBuilder<dashboardData>(
         future: _dashboardFuture,
         builder: (context, snapshot) {
@@ -118,8 +117,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-
-                // Stats Row
                 Padding(
                   padding: const EdgeInsets.all(16),
                   child: stats.isEmpty
@@ -187,8 +184,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                 ),
-
-                // My Projects Header
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                   child: Row(
@@ -210,103 +205,97 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-
-                // Projects Carousel
                 SizedBox(
                   height: 260,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    children: [
-                      for (final project in projects)
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    ProjectDetailsScreen(project: project),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            width: 280,
-                            margin: const EdgeInsets.only(right: 16),
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: colors.surface,
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: colors.onSurface.withOpacity(0.08),
-                              ),
+                    children: projects.map<Widget>((project) {
+                      final progress = _parseProgress(project['progress']);
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  ProjectDetailsScreen(project: project),
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  height: 120,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    color: colors.primary.withOpacity(0.2),
-                                  ),
+                          );
+                        },
+                        child: Container(
+                          width: 280,
+                          margin: const EdgeInsets.only(right: 16),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: colors.surface,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: colors.onSurface.withOpacity(0.08),
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                height: 120,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: colors.primary.withOpacity(0.2),
                                 ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  project['name'] as String,
-                                  style: theme.textTheme.bodyLarge?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                project['name'] as String,
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  fontWeight: FontWeight.w600,
                                 ),
-                                const SizedBox(height: 4),
-                                Expanded(
-                                  child: Text(
-                                    project['description'] as String? ?? '',
+                              ),
+                              const SizedBox(height: 4),
+                              Expanded(
+                                child: Text(
+                                  project['description'] as String? ?? '',
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: colors.onSurface.withOpacity(0.6),
+                                  ),
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Progress',
                                     style: theme.textTheme.bodySmall?.copyWith(
                                       color: colors.onSurface.withOpacity(0.6),
                                     ),
-                                    maxLines: 3,
-                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                ),
-                                const SizedBox(height: 12),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Progress',
-                                      style: theme.textTheme.bodySmall
-                                          ?.copyWith(
-                                            color: colors.onSurface.withOpacity(
-                                              0.6,
-                                            ),
-                                          ),
-                                    ),
-                                    Text(
-                                      '${((project['progress'] as double) * 100).toInt()}%',
-                                      style: theme.textTheme.bodySmall
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 6),
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: LinearProgressIndicator(
-                                    value: project['progress'] as double,
-                                    minHeight: 6,
-                                    backgroundColor: colors.surface,
-                                    valueColor: AlwaysStoppedAnimation(
-                                      colors.primary,
+                                  Text(
+                                    '${(progress * 100).toInt()}%',
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
+                                ],
+                              ),
+                              const SizedBox(height: 6),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: LinearProgressIndicator(
+                                  value: progress,
+                                  minHeight: 6,
+                                  backgroundColor: colors.surface,
+                                  valueColor: AlwaysStoppedAnimation(
+                                    colors.primary,
+                                  ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
-                    ],
+                      );
+                    }).toList(),
                   ),
                 ),
               ],
@@ -315,5 +304,16 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
     );
+  }
+
+  double _parseProgress(dynamic rawProgress) {
+    if (rawProgress is num) {
+      final value = rawProgress.toDouble();
+      if (value.isNaN || value.isInfinite) {
+        return 0;
+      }
+      return value.clamp(0.0, 1.0).toDouble();
+    }
+    return 0;
   }
 }

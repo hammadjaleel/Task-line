@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:taskline/providers/auth_providers.dart';
+import 'package:taskline/providers/create_task_provider.dart';
 
 class AddTaskScreen extends StatefulWidget {
-  const AddTaskScreen({super.key});
+  final Map<String, dynamic>? projectData;
+  const AddTaskScreen({super.key, this.projectData});
 
   @override
   State<AddTaskScreen> createState() => _AddTaskScreenState();
@@ -10,7 +15,11 @@ class AddTaskScreen extends StatefulWidget {
 class _AddTaskScreenState extends State<AddTaskScreen> {
   String _selectedPriority = 'Medium';
   DateTime? _dueDate;
+  bool _isSubmitting = false;
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController titlecontroller = TextEditingController();
+  final TextEditingController descriptioncontroller = TextEditingController();
   Future<void> _pickDueDate() async {
     final now = DateTime.now();
     final picked = await showDatePicker(
@@ -28,6 +37,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
+    final taskprovider = Provider.of<CreateTaskProvider>(
+      context,
+      listen: false,
+    );
+    final authProvider = Provider.of<AuthProviders>(context, listen: false);
+    final token = authProvider.user!.token;
+    final int projectId = widget.projectData?['id'] as int? ?? 0;
 
     return Scaffold(
       appBar: AppBar(
@@ -67,163 +83,281 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(16, 24, 16, 140),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// Task Title
-              Text(
-                'Task Title',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: colors.onSurface.withOpacity(0.6),
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-                decoration: InputDecoration(
-                  hintText: 'What needs to be done?',
-                  filled: true,
-                  fillColor: colors.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(
-                      color: colors.onSurface.withOpacity(0.1),
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(
-                      color: colors.onSurface.withOpacity(0.1),
-                    ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /// Task Title
+                Text(
+                  'Task Title',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: colors.onSurface.withOpacity(0.6),
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-              ),
-
-              const SizedBox(height: 24),
-
-              /// Description
-              Text(
-                'Description',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: colors.onSurface.withOpacity(0.6),
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                maxLines: 6,
-                decoration: InputDecoration(
-                  hintText: 'Add more details about this task...',
-                  filled: true,
-                  fillColor: colors.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(
-                      color: colors.onSurface.withOpacity(0.1),
-                    ),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: titlecontroller,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter a task title';
+                    }
+                    return null;
+                  },
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(
-                      color: colors.onSurface.withOpacity(0.1),
+                  decoration: InputDecoration(
+                    hintText: 'What needs to be done?',
+                    filled: true,
+                    fillColor: colors.surface,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: colors.onSurface.withOpacity(0.1),
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: colors.onSurface.withOpacity(0.1),
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 32),
+                const SizedBox(height: 24),
 
-              /// Due Date
-              _selectionRow(
-                context,
-                icon: Icons.calendar_today,
-                title: 'Due Date',
-                trailing: _dueDate != null
-                    ? MaterialLocalizations.of(
+                /// Description
+                Text(
+                  'Description',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: colors.onSurface.withOpacity(0.6),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: descriptioncontroller,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter a description';
+                    }
+                    return null;
+                  },
+                  maxLines: 6,
+                  decoration: InputDecoration(
+                    hintText: 'Add more details about this task...',
+                    filled: true,
+                    fillColor: colors.surface,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: colors.onSurface.withOpacity(0.1),
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: colors.onSurface.withOpacity(0.1),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 32),
+
+                /// Due Date
+                _selectionRow(
+                  context,
+                  icon: Icons.calendar_today,
+                  title: 'Due Date',
+                  trailing: _dueDate != null
+                      ? MaterialLocalizations.of(
+                          context,
+                        ).formatMediumDate(_dueDate!)
+                      : 'Select date',
+                  onTap: _pickDueDate,
+                ),
+
+                const SizedBox(height: 12),
+
+                /// Assign To
+                _selectionRow(
+                  context,
+                  icon: Icons.person_add,
+                  title: 'Assign To',
+                  trailing: 'Me',
+                  showAvatar: true,
+                ),
+
+                const SizedBox(height: 24),
+
+                /// Priority
+                Text(
+                  'Priority',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: colors.onSurface.withOpacity(0.6),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: colors.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: colors.onSurface.withOpacity(0.1),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      _priorityChip(
                         context,
-                      ).formatMediumDate(_dueDate!)
-                    : 'Select date',
-                onTap: _pickDueDate,
-              ),
-
-              const SizedBox(height: 12),
-
-              /// Assign To
-              _selectionRow(
-                context,
-                icon: Icons.person_add,
-                title: 'Assign To',
-                trailing: 'Me',
-                showAvatar: true,
-              ),
-
-              const SizedBox(height: 24),
-
-              /// Priority
-              Text(
-                'Priority',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: colors.onSurface.withOpacity(0.6),
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: colors.surface,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: colors.onSurface.withOpacity(0.1)),
-                ),
-                child: Row(
-                  children: [
-                    _priorityChip(
-                      context,
-                      'Low',
-                      _selectedPriority == 'Low',
-                      () => setState(() => _selectedPriority = 'Low'),
-                    ),
-                    _priorityChip(
-                      context,
-                      'Medium',
-                      _selectedPriority == 'Medium',
-                      () => setState(() => _selectedPriority = 'Medium'),
-                    ),
-                    _priorityChip(
-                      context,
-                      'High',
-                      _selectedPriority == 'High',
-                      () => setState(() => _selectedPriority = 'High'),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Icons.check_circle),
-                    label: const Text('Save Task'),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      textStyle: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
+                        'Low',
+                        _selectedPriority == 'Low',
+                        () => setState(() => _selectedPriority = 'Low'),
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                      _priorityChip(
+                        context,
+                        'Medium',
+                        _selectedPriority == 'Medium',
+                        () => setState(() => _selectedPriority = 'Medium'),
+                      ),
+                      _priorityChip(
+                        context,
+                        'High',
+                        _selectedPriority == 'High',
+                        () => setState(() => _selectedPriority = 'High'),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 40),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _isSubmitting
+                          ? null
+                          : () async {
+                              print("Task Title: ${titlecontroller.text}");
+                              print(
+                                "Description: ${descriptioncontroller.text}",
+                              );
+                              print("Due Date: ${_dueDate}");
+                              print("Priority: $_selectedPriority");
+
+                              if (!_formKey.currentState!.validate()) {
+                                print(
+                                  "Form validation failed, not creating task.",
+                                );
+                                return;
+                              }
+
+                              if (_dueDate == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Please select a due date before saving.',
+                                    ),
+                                  ),
+                                );
+                                return;
+                              }
+
+                              setState(() => _isSubmitting = true);
+
+                              final dueDateFormatted = DateFormat(
+                                'yyyy-MM-dd',
+                              ).format(_dueDate!);
+                              final priorityValue = _selectedPriority
+                                  .toLowerCase();
+
+                              try {
+                                final success = await taskprovider.createTask(
+                                  titlecontroller.text.trim(),
+                                  descriptioncontroller.text.trim(),
+                                  projectId,
+                                  dueDateFormatted,
+                                  1,
+                                  priorityValue,
+                                  token,
+                                );
+
+                                if (!mounted) {
+                                  return;
+                                }
+
+                                if (success != null) {
+                                  print(
+                                    "Task created successfully, closing screen...",
+                                  );
+                                  Navigator.pop(context);
+                                } else {
+                                  print(
+                                    "Task creation failed, showing error...",
+                                  );
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Failed to create task. Please try again.',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } finally {
+                                if (mounted) {
+                                  setState(() => _isSubmitting = false);
+                                }
+                              }
+                            },
+                      child: _isSubmitting
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation(
+                                      colors.onPrimary,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                const Text('Saving...'),
+                              ],
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Icon(Icons.check_circle),
+                                SizedBox(width: 8),
+                                Text('Save Task'),
+                              ],
+                            ),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        textStyle: theme.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

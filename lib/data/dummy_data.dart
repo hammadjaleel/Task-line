@@ -89,6 +89,41 @@ class DummyData {
     },
   ];
 
+  static final List<Map<String, dynamic>> projectTasks = [
+    {
+      'id': 1,
+      'title': 'User Interview Analysis',
+      'dueDate': 'Due Today',
+      'status': 'In Progress',
+      'priority': 'High',
+      'isCompleted': false,
+    },
+    {
+      'id': 2,
+      'title': 'Design System Update',
+      'dueDate': 'Tomorrow',
+      'status': 'Review',
+      'priority': 'Medium',
+      'isCompleted': false,
+    },
+    {
+      'id': 3,
+      'title': 'Dashboard QA Pass',
+      'dueDate': 'Oct 27',
+      'status': 'Blocked',
+      'priority': 'High',
+      'isCompleted': false,
+    },
+    {
+      'id': 4,
+      'title': 'Design System Update',
+      'dueDate': 'Completed',
+      'status': 'Done',
+      'priority': 'Low',
+      'isCompleted': true,
+    },
+  ];
+
   // Notifications
   static final List<Map<String, dynamic>> notificationsToday = [
     {
