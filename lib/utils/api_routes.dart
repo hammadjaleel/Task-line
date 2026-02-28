@@ -12,4 +12,6 @@ class ApiRoutes {
   static const String createTask = '$baseUrl/tasks';
 
   static const String taskDetailbyProjectId = '$baseUrl/tasks?project_id='; // Append task ID to this URL;
+
+  static const String listAllProjects= '$baseUrl/projects';
 }

@@ -52,22 +52,49 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     return team is List ? team : null;
   }
 
-  String _teamSummary(List<dynamic>? ids) {
-    if (ids == null || ids.isEmpty) {
+  String _teamSummary(List<dynamic>? team) {
+    final List<String> memberNames = [];
+
+    if (team != null) {
+      for (final member in team) {
+        if (member is Map<String, dynamic>) {
+          final rawName = member['name'];
+          if (rawName is String && rawName.trim().isNotEmpty) {
+            memberNames.add(rawName.trim());
+            continue;
+          }
+          final rawEmail = member['email'];
+          if (rawEmail is String && rawEmail.trim().isNotEmpty) {
+            memberNames.add(rawEmail.trim());
+          }
+        } else if (member is String && member.trim().isNotEmpty) {
+          memberNames.add(member.trim());
+        } else if (member is int) {
+          final fallback = DummyData.teamMembers.firstWhere(
+            (candidate) => candidate['id'] == member,
+            orElse: () => <String, dynamic>{},
+          );
+          final fallbackName = fallback['name'];
+          if (fallbackName is String && fallbackName.trim().isNotEmpty) {
+            memberNames.add(fallbackName.trim());
+          }
+        }
+      }
+    }
+
+    if (memberNames.isEmpty) {
+      final owner = widget.project?['owner'] as Map<String, dynamic>?;
+      final ownerName = owner?['name'];
+      if (ownerName is String && ownerName.trim().isNotEmpty) {
+        return ownerName.trim();
+      }
       return 'No team assigned yet';
     }
-    final lookup = ids.map((id) => id as int).toSet();
-    final names = DummyData.teamMembers
-        .where((member) => lookup.contains(member['id'] as int))
-        .map((member) => member['name'] as String)
-        .toList();
-    if (names.isEmpty) {
-      return 'No team assigned yet';
+
+    if (memberNames.length <= 3) {
+      return memberNames.join(', ');
     }
-    if (names.length <= 3) {
-      return names.join(', ');
-    }
-    return '${names.take(3).join(', ')} (+${names.length - 3})';
+    return '${memberNames.take(3).join(', ')} (+${memberNames.length - 3})';
   }
 
   String _formatDueDate(DateTime? dueDate) {
