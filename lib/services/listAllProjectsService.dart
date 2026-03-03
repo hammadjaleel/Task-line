@@ -27,4 +27,25 @@ class Listallprojectsservice {
     return null;
    }
   }
+
+
+  Future<bool> deleteProject(String token, int projectId) async {
+    final deleteUrl = '${ApiRoutes.deleteProject}$projectId';
+    Uri url = Uri.parse(deleteUrl);
+    final headers = {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "Authorization": "Bearer $token",
+    };
+
+    final response = await http.delete(url, headers: headers);
+
+    if (response.statusCode == 200) {
+      print("Project deleted successfully");
+      return true;
+    } else {
+      print("Error deleting project from API: ${response.statusCode}");
+      return false;
+    }
+  }
 }

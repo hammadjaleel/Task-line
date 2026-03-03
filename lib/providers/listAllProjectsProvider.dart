@@ -17,4 +17,14 @@ class Listallprojectsprovider extends ChangeNotifier {
       return Future.error(e);
     }
   }
+
+  Future<bool> deleteProject(String token, int projectId) async {
+    try {
+      final result = await service.deleteProject(token, projectId);
+      return result;
+    } catch (e) {
+      print("Error deleting project: $e");
+      return Future.error(e);
+    }
+  }
 }

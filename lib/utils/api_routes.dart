@@ -14,4 +14,5 @@ class ApiRoutes {
   static const String taskDetailbyProjectId = '$baseUrl/tasks?project_id='; // Append task ID to this URL;
 
   static const String listAllProjects= '$baseUrl/projects';
+  static const String deleteProject='$baseUrl/projects/'; // Append project ID to this URL for deletion
 }

@@ -13,6 +13,9 @@ class ProjectsScreen extends StatefulWidget {
 }
 
 class _ProjectsScreenState extends State<ProjectsScreen> {
+
+  
+
   String _teamSummary(Map<String, dynamic> project) {
     final team = List<Map<String, dynamic>>.from(project['team'] ?? []);
     if (team.isEmpty) {
@@ -25,6 +28,37 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
         .toList();
     if (names.length <= 2) return names.join(', ');
     return '${names.take(2).join(', ')} +${names.length - 2}';
+  }
+
+  Future<void> _showDeleteDialog(String title, int projectId, String token) async {
+    return showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete project'),
+        content: Text(
+          'Do you really want to delete "$title"? This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () async {
+             
+              final result = await Listallprojectsprovider().deleteProject(token, projectId);
+              if (result) {
+                Navigator.of(dialogContext).pop();
+                // Refresh the projects list
+                setState(() {
+                });
+              }
+            },
+            child:Text('Delete'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -42,7 +76,56 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
       future: projectprovider.fetchAllProjects(token),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return  Scaffold(
+          appBar: AppBar(
+            elevation: 0,
+            toolbarHeight: 90,
+            titleSpacing: 16,
+            title: Row(
+              children: [
+                Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: colors.primary.withOpacity(0.2),
+                    border: Border.all(color: colors.primary.withOpacity(0.4)),
+                  ),
+                  child: Icon(Icons.account_circle, color: colors.primary),
+                ),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'All Projects',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      ' Active Projects',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: colors.onSurface.withOpacity(0.6),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.notifications),
+                onPressed: () {},
+              ),
+              const SizedBox(width: 8),
+            ],
+          ),
+          body: const Center(
+            child: CircularProgressIndicator(),
+          ),
+          );
+
         }
         if (snapshot.hasError || !snapshot.hasData) {
           return Padding(
@@ -190,100 +273,113 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
                   childAspectRatio: 0.78,
                   children: [
                     for (final project in projects)
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  ProjectDetailsScreen(project: project),
+                      Material(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(16),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(16),
+                          splashColor: colors.primary.withOpacity(0.12),
+                          highlightColor: colors.primary.withOpacity(0.08),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    ProjectDetailsScreen(project: project),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: colors.surface.withOpacity(0.6),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: colors.onSurface.withOpacity(0.1),
+                              ),
                             ),
-                          );
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: colors.surface.withOpacity(0.6),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: colors.onSurface.withOpacity(0.1),
-                            ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Container(
-                                    height: 40,
-                                    width: 40,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      color: colors.primary,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      height: 40,
+                                      width: 40,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        color: colors.primary,
+                                      ),
+                                      child: Icon(
+                                        Icons.work_outline,
+                                        color: Colors.white,
+                                        
+                                      ),
                                     ),
-                                    child: const Icon(
-                                      Icons.work_outline,
-                                      color: Colors.white,
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.delete_outline,
+                                        color: colors.onSurface.withOpacity(0.6),
+                                      ),
+                                      onPressed: () {
+                                        _showDeleteDialog(project['title'] as String? ?? 'this project', project['id'] as int, token);
+                                      },
                                     ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  project['title'] as String,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.textTheme.bodyLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  Icon(
-                                    Icons.more_horiz,
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  _teamSummary(project),
+                                  style: theme.textTheme.bodySmall?.copyWith(
                                     color: colors.onSurface.withOpacity(0.6),
+                                    letterSpacing: 1,
                                   ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                project['title'] as String,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: theme.textTheme.bodyLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
                                 ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                _teamSummary(project),
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: colors.onSurface.withOpacity(0.6),
-                                  letterSpacing: 1,
+                                const Spacer(),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Progress',
+                                      style: theme.textTheme.bodySmall?.copyWith(
+                                        color: colors.onSurface.withOpacity(0.6),
+                                      ),
+                                    ),
+                                    Text(
+                                      '${((project['progress'] as int) * 100).toInt()}%',
+                                      style: theme.textTheme.bodySmall?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              const Spacer(),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Progress',
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: colors.onSurface.withOpacity(0.6),
+                                const SizedBox(height: 6),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: LinearProgressIndicator(
+                                    value: (project['progress'] as int) / 100,
+                                    minHeight: 5,
+                                    backgroundColor: colors.onSurface.withOpacity(
+                                      0.1,
+                                    ),
+                                    valueColor: AlwaysStoppedAnimation(
+                                      colors.primary,
                                     ),
                                   ),
-                                  Text(
-                                    '${((project['progress'] as int) * 100).toInt()}%',
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 6),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: LinearProgressIndicator(
-                                  value: (project['progress'] as int) / 100,
-                                  minHeight: 5,
-                                  backgroundColor: colors.onSurface.withOpacity(
-                                    0.1,
-                                  ),
-                                  valueColor: AlwaysStoppedAnimation(
-                                    colors.primary,
-                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
