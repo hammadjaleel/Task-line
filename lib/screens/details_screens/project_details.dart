@@ -154,9 +154,16 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     return priority[0].toUpperCase() + priority.substring(1).toLowerCase();
   }
 
-  Widget _buildTaskCard(TaskItem task, ThemeData theme, ColorScheme colors) {
+  Widget _buildTaskCard(
+    TaskItem task,
+    ThemeData theme,
+    ColorScheme colors,
+    int taskid,
+    String token,
+  ) {
     final statusColor = _statusColor(task.status, colors);
     final priorityColor = _priorityColor(task.priority, colors);
+    final provider = Provider.of<TaskByIdProvider>(context);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -246,29 +253,91 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
           ),
           const SizedBox(height: 8),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(
-                Icons.flag_outlined,
-                size: 16,
-                color: colors.onSurface.withOpacity(0.6),
-              ),
-              const SizedBox(width: 6),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: priorityColor.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  _priorityLabel(task.priority),
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: priorityColor,
-                    fontWeight: FontWeight.w600,
+              Row(
+                children: [
+                  Icon(
+                    Icons.flag_outlined,
+                    size: 16,
+                    color: colors.onSurface.withOpacity(0.6),
                   ),
-                ),
+                  const SizedBox(width: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: priorityColor.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      _priorityLabel(task.priority),
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: priorityColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              IconButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text(
+                          "Delete task",
+                          style: theme.textTheme.titleMedium,
+                        ),
+                        content: Text(
+                          "Are you sure! You want to delete this task?",
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text("Cancel"),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              Navigator.pop(context);
+                              final success = await provider.deletetask(
+                                taskid,
+                                token,
+                              );
+                              if (success==true) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      success
+                                          ? 'Task deleted successfully'
+                                          : 'Failed to delete task',
+                                    ),
+                                    backgroundColor: success
+                                        ? Colors.green
+                                        : Colors.red,
+                                  ),
+                                );
+                                if (success) {
+                                  setState(() {});
+                                }
+                              }
+                            },
+                            child: const Text(
+                              "Delete",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                icon: Icon(Icons.delete_outline_outlined),
               ),
             ],
           ),
@@ -454,7 +523,13 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                               const SizedBox(height: 12),
                           itemBuilder: (context, index) {
                             final task = data.tasks[index];
-                            return _buildTaskCard(task, theme, colors);
+                            return _buildTaskCard(
+                              task,
+                              theme,
+                              colors,
+                              task.id,
+                              token,
+                            );
                           },
                         ),
                       ],
@@ -473,9 +548,11 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
           FloatingActionButton.extended(
             heroTag: 'add',
             onPressed: () {
-              Navigator.of(
-                context,
-              ).push(MaterialPageRoute(builder: (context) => AddTaskScreen()));
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => AddTaskScreen(projectData: project),
+                ),
+              );
             },
             icon: const Icon(Icons.add),
             label: const Text('Add Task'),

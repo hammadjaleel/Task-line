@@ -125,7 +125,7 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                     fontWeight: FontWeight.w600,
                   ),
                   decoration: InputDecoration(
-                    hintText: 'e.g., Mobile App Redesign',
+                  
                     filled: true,
                     fillColor: colors.surface,
                     border: OutlineInputBorder(
@@ -162,7 +162,7 @@ class _AddProjectScreenState extends State<AddProjectScreen> {
                   minLines: 3,
                   maxLines: 5,
                   decoration: InputDecoration(
-                    hintText: 'e.g., Redesign the mobile app UI',
+                   
                     filled: true,
                     fillColor: colors.surface,
                     border: OutlineInputBorder(
